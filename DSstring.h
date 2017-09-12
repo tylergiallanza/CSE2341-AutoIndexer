@@ -29,5 +29,6 @@ class DSstring {
         char& operator[] (int index) const;
         DSstring substring(int start, int end);
         DSstring* splitIntoWords(int& numWords);
+        int toInt();
 };
 #endif

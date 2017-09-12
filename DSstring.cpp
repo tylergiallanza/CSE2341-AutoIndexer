@@ -280,3 +280,7 @@ DSstring* DSstring::splitIntoWords(int& numWords) {
 
     return lineArray;
 }
+
+int DSstring::toInt() {
+    return atoi(cstring);
+}
