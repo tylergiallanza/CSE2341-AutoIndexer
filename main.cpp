@@ -8,36 +8,48 @@
 
 DSstring* splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
     int numWordsTemp = 0;
+
+    //Split the input line into words first
     DSstring* arrTemp = str->splitIntoWords(numWordsTemp);
 
+    //Count the number of words/phrases
     bool inPhrase = false;
     for(int i=0;i<numWordsTemp;i++) {
         if(arrTemp[i][0] == '[') {
+            //Started a phrase
             inPhrase = true;
         } else if(arrTemp[i][-1] == ']') {
+            //Ended a phrase
             inPhrase = false;
             numWords++;
         } else if(!inPhrase) {
+            //Added a non-phrase word
             numWords++;
         }
     }
 
+    //Add words/phrases to a new array
     inPhrase = false;
     DSstring tempStr;
     DSstring* lineArray = new DSstring[numWords];
+    //Concat words in a phrase with a space in between
     DSstring space(" ");
     numWords = 0;
     for(int i=0;i<numWordsTemp;i++) {
         if(arrTemp[i][0] == '[') {
+            //Store first word of phrase into tempStr
             inPhrase = true;
             tempStr = arrTemp[i].substring(1,arrTemp[i].size());
         } else if(arrTemp[i][-1] == ']') {
+            //Add last word of phrase to tempStr and store into array
             inPhrase = false;
             tempStr = tempStr + space + arrTemp[i].substring(0,-2);
             lineArray[numWords++] = tempStr;
         } else if(!inPhrase){
+            //Add non-phrase word into array
             lineArray[numWords++] = arrTemp[i];
         } else {
+            //Add word to phrase
             tempStr = tempStr + space + arrTemp[i];
         }
     }
