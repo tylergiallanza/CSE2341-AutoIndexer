@@ -19,15 +19,17 @@ class DSstring {
         DSstring();
         int levDist(const DSstring& other);
         int size() const;
-        char charAt(int loc) const;
+        char charAt(int index) const;
         char* c_str();
         friend ostream& operator<<(ostream& os, const DSstring& dss);
         DSstring& operator= (const DSstring &str);
         DSstring& operator+ (const DSstring &str1);
         bool operator> (const DSstring &str);
+        bool operator< (const DSstring &str);
         bool operator== (const DSstring &other);
         char& operator[] (int index) const;
         DSstring substring(int start, int end);
+        DSstring lower();
         DSstring* splitIntoWords(int& numWords);
         int toInt();
 };

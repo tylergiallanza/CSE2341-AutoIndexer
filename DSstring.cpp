@@ -49,8 +49,17 @@ DSstring::DSstring() {
 }
 
 // Returns the character at the given position.
-char DSstring::charAt(int loc) const {
-    return cstring[loc];
+char DSstring::charAt(int index) const {
+    if(length == 0 || index>=length) {
+        static char s;
+        s = 0;
+        return s;
+    }
+    if(index < 0) {
+        index = length+index;
+    }
+
+    return cstring[index];
 
 }
 
@@ -158,6 +167,10 @@ bool DSstring::operator> (const DSstring &str) {
     //If they have the same prefix, return the longer one
     return length>=str.size();
 }
+// < operator
+bool DSstring::operator< (const DSstring &str) {
+    return !(*this>str || *this==str);
+}
 
 DSstring DSstring::substring(int start, int end) {
     //Catch negative start and end indices
@@ -174,6 +187,19 @@ DSstring DSstring::substring(int start, int end) {
 
     //Null terminator
     temp[end-start] = '\0';
+
+    DSstring* dstemp = new DSstring(temp);
+    return *dstemp;
+}
+
+DSstring DSstring::lower() {
+    char* temp = new char[length+1];
+    for(int i=0;i<length;i++) {
+        temp[i] = tolower(cstring[i]);
+    }
+
+    //Null terminator
+    temp[length] = '\0';
 
     DSstring* dstemp = new DSstring(temp);
     return *dstemp;

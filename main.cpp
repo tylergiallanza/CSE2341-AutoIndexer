@@ -4,9 +4,45 @@
 #include "DSvector.h"
 #include "DSRBtree.h"
 #include "tests.hpp"
+#include "DSsortedLinkedList.h"
 
 DSstring* splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
-    return str;
+    int numWordsTemp = 0;
+    DSstring* arrTemp = str->splitIntoWords(numWordsTemp);
+
+    bool inPhrase = false;
+    for(int i=0;i<numWordsTemp;i++) {
+        if(arrTemp[i][0] == '[') {
+            inPhrase = true;
+        } else if(arrTemp[i][-1] == ']') {
+            inPhrase = false;
+            numWords++;
+        } else if(!inPhrase) {
+            numWords++;
+        }
+    }
+
+    inPhrase = false;
+    DSstring tempStr;
+    DSstring* lineArray = new DSstring[numWords];
+    DSstring space(" ");
+    numWords = 0;
+    for(int i=0;i<numWordsTemp;i++) {
+        if(arrTemp[i][0] == '[') {
+            inPhrase = true;
+            tempStr = arrTemp[i].substring(1,arrTemp[i].size());
+        } else if(arrTemp[i][-1] == ']') {
+            inPhrase = false;
+            tempStr = tempStr + space + arrTemp[i].substring(0,-2);
+            lineArray[numWords++] = tempStr;
+        } else if(!inPhrase){
+            lineArray[numWords++] = arrTemp[i];
+        } else {
+            tempStr = tempStr + space + arrTemp[i];
+        }
+    }
+
+    return lineArray;
 }
 
 void readInFile(const char* inPath) {
@@ -25,16 +61,22 @@ void readInFile(const char* inPath) {
         //Check if the current line is a page number
         if(str->charAt(0) == '<') {
             currentPage = str->substring(1,str->size()-1).toInt();
+            cout << currentPage << endl;
             if(currentPage == -1) {
+                inFile.close();
+                inFile.clear();
+                delete str;
                 return;
             }
         } else {
             //Break the line into words and phrases
             int lineLength = 0;
+            cout << *str << endl;
             DSstring* lineArray = splitIntoWordsAndPhrases(str, lineLength);
             //Store each word or phrase into the tree
             for(int index=0;index<lineLength;index++) {
-                tree.storeKeyValue(lineArray[index], currentPage);
+                cout << "    " << lineArray[index].trimPunct().lower() << endl;
+                //tree.storeKeyValue(lineArray[index], currentPage);
             }
         }
 
@@ -42,8 +84,6 @@ void readInFile(const char* inPath) {
 
         delete str;
     }
-    inFile.close();
-    inFile.clear();
 
 }
 
