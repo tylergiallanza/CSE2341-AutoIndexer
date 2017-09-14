@@ -5,6 +5,7 @@
 #include "DSRBtree.h"
 #include "tests.hpp"
 #include "DSsortedLinkedList.h"
+#include "DSRBtree.h"
 
 DSstring* splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
     int numWordsTemp = 0;
@@ -62,7 +63,7 @@ void readInFile(const char* inPath) {
     int line = 0;
     int currentPage = 0;
     DSstring* str;
-    DSRBtree<DSstring, int> tree;
+    DSRBtree<DSstring, int> tree("\0");
     //max of 80 chars per line
     char A[80];
 
@@ -73,22 +74,23 @@ void readInFile(const char* inPath) {
         //Check if the current line is a page number
         if(str->charAt(0) == '<') {
             currentPage = str->substring(1,str->size()-1).toInt();
-            cout << currentPage << endl;
+            //cout << currentPage << endl;
             if(currentPage == -1) {
                 inFile.close();
                 inFile.clear();
+                cout << tree << endl;
                 delete str;
                 return;
             }
         } else {
             //Break the line into words and phrases
             int lineLength = 0;
-            cout << *str << endl;
+            //cout << *str << endl;
             DSstring* lineArray = splitIntoWordsAndPhrases(str, lineLength);
             //Store each word or phrase into the tree
             for(int index=0;index<lineLength;index++) {
-                cout << "    " << lineArray[index].trimPunct().lower() << endl;
-                //tree.storeKeyValue(lineArray[index], currentPage);
+                //cout << "    " << lineArray[index].trimPunct().lower() << endl;
+                tree.storeKeyValue(lineArray[index].trimPunct().lower(), currentPage);
             }
         }
 

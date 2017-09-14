@@ -75,6 +75,18 @@ class DSlinkedList {
                 current = nextNode;
             }
         }
+        void addNoRepeat(T item) {
+            DSlinkedListNode<T>* temp = new DSlinkedListNode<T>;
+            temp->value = item;
+            temp->next = NULL;
+            if(rootNode == NULL) {
+                rootNode = temp;
+
+            } else {
+                lastNode->next = temp;
+            }
+            lastNode = temp;
+        }
         void add(T item) {
             DSlinkedListNode<T>* temp = new DSlinkedListNode<T>;
             temp->value = item;

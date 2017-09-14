@@ -78,7 +78,7 @@ class DSsortedLinkedList {
             }
         }
         void add(T item) {
-            cout << "Adding" << endl;
+            //cout << "Adding " << item << endl;
             DSlinkedListNode<T>* temp = new DSlinkedListNode<T>;
             temp->value = item;
             temp->next = NULL;
@@ -86,7 +86,7 @@ class DSsortedLinkedList {
                 //This is the first element -- add it as root
                 rootNode = temp;
                 lastNode = temp;
-                cout << "Added as new root" << endl;
+                //cout << "Added " << item << " as new root" << endl;
             } else {
                 DSlinkedListNode<T>* current = rootNode;
 
@@ -94,14 +94,14 @@ class DSsortedLinkedList {
                     //This is the smallest element -- add it as root
                     temp->next = current;
                     rootNode = temp;
-                    cout << "Displaced existing root" << endl;
+                    //cout << "Displaced existing root" << endl;
                 }
                 while(current->next != NULL) {
                     if(item < current->next->value) {
                         //We found the place for this element -- insert it
                         temp->next = current->next;
                         current->next = temp;
-                        cout << "Inserted into the middle" << endl;
+                        //cout << "Inserted into the middle" << endl;
                         return;
                     }
                     current = current->next;
@@ -109,7 +109,7 @@ class DSsortedLinkedList {
                 //This is the largest element -- add it as the lastNode
                 lastNode->next = temp;
                 lastNode = temp;
-                cout << "Added at the end" << endl;
+                //cout << "Added at the end" << endl;
             }
         }
         bool isEmpty() { return !rootNode;}
@@ -133,7 +133,7 @@ class DSsortedLinkedList {
         }
 
         friend ostream& operator<<(ostream& os, const DSsortedLinkedList& dsl) {
-            os << "linked list <" << *(dsl.rootNode) << ">";
+            os << "<" << *(dsl.rootNode) << ">";
             return os;
         }
             
