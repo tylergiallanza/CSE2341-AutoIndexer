@@ -10,14 +10,63 @@ using namespace std;
 
 AutoIndexer::AutoIndexer(const char* inPath) {
     inFilePath = inPath;
+    tree = new DSRBtree<DSstring, int>("\0");
     readInFile();
 }
+void AutoIndexer::writeToFile(const char* outPath) {
+    ofstream outFile(outPath);
+    char currentChar = '\0';
+    DSvector<DSRBnode<DSstring, int>> nodes = tree->inOrderTraverse();
+    for(int i=0;i<nodes.size();i++)  {
+        if(nodes.get(i).key[0] != currentChar) {
+            currentChar = nodes.get(i).key[0];
+            outFile << "[" << currentChar << "]" << endl;
+        }
+
+        bool indent = false;
+        DSstring commaSpace(", ");
+        DSstring* lineBuffer = new DSstring(": ");
+        *lineBuffer = nodes.get(i).key + *lineBuffer;
+        for(int j=0;j<nodes.get(i).values->size();j++) {
+            if(indent) {
+                delete lineBuffer;
+                lineBuffer = new DSstring("    ");
+                if(j==nodes.get(i).values->size()-1)
+                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j);
+                else
+                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
+                indent = false;
+            } else {
+                if(lineBuffer->size()+sizeInt(nodes.get(i).values->get(j))+2 > 50) {
+                    indent = true;
+                    outFile << *lineBuffer << endl;
+                    j--;
+                    continue;
+                }
+                if(j==nodes.get(i).values->size()-1)
+                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j);
+                else
+                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
+            }
+        }
+        outFile << *lineBuffer << endl;
+        delete lineBuffer;
+    }
+
+    outFile.close();
+    outFile.clear();
+}
+//Destructor
+AutoIndexer::~AutoIndexer() {
+    delete tree;
+}
+
+//Store the input file into the tree
 void AutoIndexer::readInFile() {
     ifstream inFile(inFilePath);
     int line = 0;
     int currentPage = 0;
     DSstring* str;
-    DSRBtree<DSstring, int> tree("\0");
     //max of 80 chars per line
     char A[80];
 
@@ -32,39 +81,6 @@ void AutoIndexer::readInFile() {
             if(currentPage == -1) {
                 inFile.close();
                 inFile.clear();
-
-                char currentChar = '\0';
-                DSvector<DSRBnode<DSstring, int>> nodes = tree.inOrderTraverse();
-                for(int i=0;i<nodes.size();i++)  {
-                    if(nodes.get(i).key[0] != currentChar) {
-                        currentChar = nodes.get(i).key[0];
-                        cout << "[" << currentChar << "]" << endl;
-                    }
-
-                    bool indent = false;
-                    DSstring commaSpace(", ");
-                    DSstring* lineBuffer = new DSstring(": ");
-                    *lineBuffer = nodes.get(i).key + *lineBuffer;
-                    for(int j=0;j<nodes.get(i).values->size();j++) {
-                        if(indent) {
-                            delete lineBuffer;
-                            lineBuffer = new DSstring("    ");
-                            *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
-                            indent = false;
-                        } else {
-                            if(lineBuffer->size()+sizeInt(nodes.get(i).values->get(j))+2 > 50) {
-                                indent = true;
-                                cout << *lineBuffer << endl;
-                                j--;
-                                continue;
-                            }
-                            *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
-                        }
-                    }
-                    cout << *lineBuffer << endl;
-                    delete lineBuffer;
-                }
-
                 
                 delete str;
                 return;
@@ -77,7 +93,7 @@ void AutoIndexer::readInFile() {
             //Store each word or phrase into the tree
             for(int index=0;index<lineLength;index++) {
                 //cout << "    " << lineArray[index].trimPunct().lower() << endl;
-                tree.storeKeyValue(lineArray[index].trimPunct().lower(), currentPage);
+                tree->storeKeyValue(lineArray[index].trimPunct().lower(), currentPage);
             }
         }
 
@@ -86,6 +102,8 @@ void AutoIndexer::readInFile() {
         delete str;
     }
 }
+
+//Write index results to the output file
 void writeOutFile(const char* outPath) {
     ofstream outFile(outPath);
 
@@ -159,7 +177,6 @@ int AutoIndexer::sizeInt(int i) {
         i/=10;
         length++;
     }
-
     return length;
 
 }

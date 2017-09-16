@@ -23,6 +23,7 @@ int main(int argc, const char * argv[]) {
         t = clock();
 
         AutoIndexer ai(argv[1]);
+        ai.writeToFile(argv[2]);
 
         //Output total runtime
         t = clock() - t;
