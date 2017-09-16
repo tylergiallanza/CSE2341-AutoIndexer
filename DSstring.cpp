@@ -25,6 +25,25 @@ DSstring::DSstring(char* cstringIn) {
     cstring[length] = 0;
 }
 
+//Int constructor - take an int
+DSstring::DSstring(int i) {
+    char cstringIn[12];
+    sprintf(cstringIn, "%d", i);
+
+    //Get length of input cstring
+    length=0;
+    while(cstringIn[length] != '\0') {
+        length++;
+    }
+    
+    //Plus 1 for the null terminator
+    cstring = new char[length+1];
+    for(int i=0;i<length;i++) {
+        cstring[i] = cstringIn[i];
+    }
+    cstring[length] = 0;
+}
+
 //Deconstructor
 DSstring::~DSstring() {
     delete [] cstring;
@@ -228,6 +247,12 @@ DSstring& DSstring::operator+ (const DSstring &str) {
 
     DSstring* dstemp = new DSstring(temp);
     return *dstemp;
+}
+
+//+ operator for int
+DSstring& DSstring::operator+ (int i) {
+    DSstring iString(i);
+    return *this+iString;
 }
 
 //Remove whitespace and punctuation from the start and end of a word

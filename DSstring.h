@@ -16,6 +16,7 @@ class DSstring {
         DSstring(char* cstringIn);
         ~DSstring();
         DSstring(const DSstring& str);
+        DSstring(int i);
         DSstring();
         int levDist(const DSstring& other);
         int size() const;
@@ -24,6 +25,7 @@ class DSstring {
         friend ostream& operator<<(ostream& os, const DSstring& dss);
         DSstring& operator= (const DSstring &str);
         DSstring& operator+ (const DSstring &str1);
+        DSstring& operator+ (int i);
         bool operator> (const DSstring &str);
         bool operator< (const DSstring &str);
         bool operator== (const DSstring &other);

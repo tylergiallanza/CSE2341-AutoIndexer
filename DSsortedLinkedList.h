@@ -28,26 +28,28 @@ class DSlinkedListNode {
         friend ostream& operator<<(ostream& os, const DSlinkedListNode& dsn) {
             os << dsn.value;
             if(dsn.next != NULL) {
-                os << " " << *(dsn.next);
+                os << ", " << *(dsn.next);
             }
             return os;
         }
-
 };
 template <class T>
 class DSsortedLinkedList {
     private:
         DSlinkedListNode<T>* rootNode;
         DSlinkedListNode<T>* lastNode;
+        int length;
     public:
  
         DSsortedLinkedList<T>() {
             rootNode = NULL;
             lastNode = NULL;
+            length = 0;
         }
 
         //Copy constructor
         DSsortedLinkedList<T>(const DSsortedLinkedList& list) {
+            length = list.length;
             DSlinkedListNode<T>* current = list.rootNode;
             DSlinkedListNode<T>* newRoot = NULL;
             while(current != NULL) {
@@ -79,6 +81,7 @@ class DSsortedLinkedList {
         }
         void add(T item) {
             //cout << "Adding " << item << endl;
+            length++;
             DSlinkedListNode<T>* temp = new DSlinkedListNode<T>;
             temp->value = item;
             temp->next = NULL;
@@ -94,6 +97,7 @@ class DSsortedLinkedList {
                     //This is the smallest element -- add it as root
                     temp->next = current;
                     rootNode = temp;
+                    return;
                     //cout << "Displaced existing root" << endl;
                 }
                 while(current->next != NULL) {
@@ -112,6 +116,18 @@ class DSsortedLinkedList {
                 //cout << "Added at the end" << endl;
             }
         }
+        T get(int index) {
+            if(index>=length)
+                return NULL;
+            DSlinkedListNode<T>* temp = rootNode;
+            int i=0;
+            while(i<index) {
+                temp = temp->next;
+                i++;
+            }
+            return temp->value;
+        }
+        int size() {return length;}
         bool isEmpty() { return !rootNode;}
         
         bool contains(T item) {
@@ -133,12 +149,13 @@ class DSsortedLinkedList {
         }
 
         friend ostream& operator<<(ostream& os, const DSsortedLinkedList& dsl) {
-            os << "<" << *(dsl.rootNode) << ">";
+            os << *(dsl.rootNode);
             return os;
         }
             
         //Assignment operator
         DSsortedLinkedList<T>& operator= (const DSsortedLinkedList<T> &list) {
+            length = list.length;
             if(&list != this) {
             DSlinkedListNode<T>* current = list.rootNode;
             DSlinkedListNode<T>* newRoot = NULL;
