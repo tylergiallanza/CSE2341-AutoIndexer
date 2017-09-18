@@ -9,6 +9,6 @@ binary tree: 1
 [c]
 complete binary tree: 3
 [h]
-heap: 1, 1, 2
+heap: 1, 2
 [t]
 tree: 1, 3, 5, 14444, 14499, 14554

@@ -93,6 +93,11 @@ class DSsortedLinkedList {
             } else {
                 DSlinkedListNode<T>* current = rootNode;
 
+                if(item == current->value) {
+                    //It's already in the list as the root
+                    length--;
+                    return;
+                }
                 if(item < current->value) {
                     //This is the smallest element -- add it as root
                     temp->next = current;
@@ -101,6 +106,11 @@ class DSsortedLinkedList {
                     //cout << "Displaced existing root" << endl;
                 }
                 while(current->next != NULL) {
+                    if(item == current->value) {
+                        //It's already in the list
+                        length--;
+                        return;
+                    }
                     if(item < current->next->value) {
                         //We found the place for this element -- insert it
                         temp->next = current->next;
@@ -109,6 +119,11 @@ class DSsortedLinkedList {
                         return;
                     }
                     current = current->next;
+                }
+                if(item == lastNode->value) {
+                    //It's already in the list
+                    length--;
+                    return;
                 }
                 //This is the largest element -- add it as the lastNode
                 lastNode->next = temp;

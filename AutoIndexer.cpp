@@ -92,7 +92,7 @@ void AutoIndexer::readInFile() {
             DSstring* lineArray = splitIntoWordsAndPhrases(str, lineLength);
             //Store each word or phrase into the tree
             for(int index=0;index<lineLength;index++) {
-                //cout << "    " << lineArray[index].trimPunct().lower() << endl;
+                cout << currentPage << "    " << lineArray[index].trimPunct().lower() << endl;
                 tree->storeKeyValue(lineArray[index].trimPunct().lower(), currentPage);
             }
         }
