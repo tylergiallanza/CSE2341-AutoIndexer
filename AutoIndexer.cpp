@@ -13,10 +13,11 @@ AutoIndexer::AutoIndexer(const char* inPath) {
     tree = new DSRBtree<DSstring, int>("\0");
     readInFile();
 }
+//Write index results to the output file
 void AutoIndexer::writeToFile(const char* outPath) {
     ofstream outFile(outPath);
     char currentChar = '\0';
-    DSvector<DSRBnode<DSstring, int>> nodes = tree->inOrderTraverse();
+    DSvector<DSRBnode<DSstring, int> > nodes = tree->inOrderTraverse();
     for(int i=0;i<nodes.size();i++)  {
         if(nodes.get(i).key[0] != currentChar) {
             currentChar = nodes.get(i).key[0];
@@ -77,7 +78,6 @@ void AutoIndexer::readInFile() {
         //Check if the current line is a page number
         if(str->charAt(0) == '<') {
             currentPage = str->substring(1,str->size()-1).toInt();
-            //cout << currentPage << endl;
             if(currentPage == -1) {
                 inFile.close();
                 inFile.clear();
@@ -88,13 +88,13 @@ void AutoIndexer::readInFile() {
         } else {
             //Break the line into words and phrases
             int lineLength = 0;
-            //cout << *str << endl;
             DSstring* lineArray = splitIntoWordsAndPhrases(str, lineLength);
             //Store each word or phrase into the tree
             for(int index=0;index<lineLength;index++) {
-                cout << currentPage << "    " << lineArray[index].trimPunct().lower() << endl;
                 tree->storeKeyValue(lineArray[index].trimPunct().lower(), currentPage);
             }
+
+            delete [] lineArray;
         }
 
         line++;
@@ -103,14 +103,6 @@ void AutoIndexer::readInFile() {
     }
 }
 
-//Write index results to the output file
-void writeOutFile(const char* outPath) {
-    ofstream outFile(outPath);
-
-    outFile.close();
-    outFile.clear();
-
-}
 DSstring* AutoIndexer::splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
     int numWordsTemp = 0;
 
@@ -158,6 +150,8 @@ DSstring* AutoIndexer::splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
             tempStr = tempStr + space + arrTemp[i];
         }
     }
+
+    delete [] arrTemp;
 
     return lineArray;
 }

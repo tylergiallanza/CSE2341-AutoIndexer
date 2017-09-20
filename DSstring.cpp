@@ -1,5 +1,6 @@
 #include "DSstring.h"
 #include <algorithm>
+#include <stdio.h>
 
 /*DSstring Class - Tyler Giallanza
  * A custom implementation of the std::string class.
@@ -7,8 +8,7 @@
  * Contains basic text manipulation functions.
 */
 
-using namespace std;
-
+/* ----- Constructors ----- */
 //Primary constructor - take a cstring
 DSstring::DSstring(char* cstringIn) {
     //Get length of input cstring
@@ -67,32 +67,12 @@ DSstring::DSstring() {
     length = 0;
 }
 
-// Returns the character at the given position.
-char DSstring::charAt(int index) const {
-    if(length == 0 || index>=length) {
-        static char s;
-        s = 0;
-        return s;
-    }
-    if(index < 0) {
-        index = length+index;
-    }
 
-    return cstring[index];
-
-}
+/* ----- Operators ----- */
 
 //Assignment operator
-DSstring& DSstring::operator= (const DSstring &str) {
-    length = str.length;
-    cstring = new char[length + 1];
-    int index = 0;
-    while (str.cstring[index]) {
-        cstring[index] = str.cstring[index];
-        index++;
-    }
-    cstring[index] = 0;
-
+DSstring& DSstring::operator= (DSstring str) {
+    swap(*this, str);
 
     return *this;
 }
@@ -112,46 +92,6 @@ bool DSstring::operator== (const DSstring& other) {
     return true;
 }
 
-/* Dynamic programming implementation of the Levenshtein Distance algorithm.
- * For all i and j, d[i][j] holds the Levenshtein distance between the first
- * i characters of *this and the first j characters of other.
-*/
-int DSstring::levDist(const DSstring& other) {
-    int n = length;
-    int m = other.length;
-    int i,j,cost,temp;
-
-    //Initialize values - that way if the other string is length 0, the length
-    //of the current prefix is the edit distance
-    for(i=0;i<=n;i++) {
-        d[i][0] = i;
-    }
-    for(j=0;j<=m;j++) {
-        d[0][j] = j;
-    }
-
-    //Calculate the distance between the first i and j characters and store it
-    //at d[i][j]
-    for(i=1;i<=n;i++) {
-        for(j=1;j<=m;j++) {
-            if(charAt(i-1) == other.charAt(j-1))  {
-                cost = 0;
-            } else {
-                cost = 1;
-            }
-            temp = min((d[i-1][j]+1),(d[i][j-1]+1));
-            d[i][j] = min(temp,(d[i-1][j-1]+cost));
-        }
-    }
-
-    return d[n][m];
-}
-
-//<< Operator
-ostream& operator<< (ostream& os, const DSstring& dss) {
-    os << dss.cstring;
-    return os;
-}
 
 //[] operator (same functionality as charAt)
 char& DSstring::operator[] (int index) const {
@@ -167,11 +107,6 @@ char& DSstring::operator[] (int index) const {
     return cstring[index];
 }
 
-
-//Get the length of the string
-int DSstring::size() const {
-    return length;
-}
 
 // > operator
 bool DSstring::operator> (const DSstring &str) {
@@ -191,49 +126,10 @@ bool DSstring::operator< (const DSstring &str) {
     return !(*this>str || *this==str);
 }
 
-DSstring DSstring::substring(int start, int end) {
-    //Catch negative start and end indices
-    if(start < 0) {
-        start = length + start + 1;
-    }
-    if(end < 0) {
-        end = length + end + 1;
-    }
-    char* temp = new char[end-start+1];
-    for(int i=0;i<end-start;i++) {
-        temp[i] = charAt(i+start);
-    }
-
-    //Null terminator
-    temp[end-start] = '\0';
-
-    DSstring* dstemp = new DSstring(temp);
-    return *dstemp;
-}
-
-DSstring DSstring::lower() {
-    char* temp = new char[length+1];
-    for(int i=0;i<length;i++) {
-        temp[i] = tolower(cstring[i]);
-    }
-
-    //Null terminator
-    temp[length] = '\0';
-
-    DSstring* dstemp = new DSstring(temp);
-    return *dstemp;
-}
-
-
-//Get the underlying cstring
-char* DSstring::c_str() {
-    return cstring;
-}
-
 //+ operator
-DSstring& DSstring::operator+ (const DSstring &str) {
+DSstring DSstring::operator+ (const DSstring &str) {
     int len = length+str.size();
-    char* temp = new char[len+1];
+    char temp[len+1];
 
     for(int i=0;i<len;i++) {
         if(i<length) {
@@ -245,18 +141,62 @@ DSstring& DSstring::operator+ (const DSstring &str) {
 
     temp[len] = 0;
 
-    DSstring* dstemp = new DSstring(temp);
-    return *dstemp;
+    DSstring dstemp(temp);
+    return dstemp;
 }
 
 //+ operator for int
-DSstring& DSstring::operator+ (int i) {
+DSstring DSstring::operator+ (int i) {
     DSstring iString(i);
     return *this+iString;
 }
 
+/* ----- Other Functionality ----- */
+
+//Substring starting at start and ending right before end
+DSstring DSstring::substring(int start, int end) {
+    //Catch negative start and end indices
+    if(start < 0) {
+        start = length + start + 1;
+    }
+    if(end < 0) {
+        end = length + end + 1;
+    }
+    char temp[end-start+1];
+    for(int i=0;i<end-start;i++) {
+        temp[i] = charAt(i+start);
+    }
+
+    //Null terminator
+    temp[end-start] = '\0';
+
+    DSstring dstemp(temp);
+    return dstemp;
+}
+
+//Get the lowercase version of the string
+DSstring DSstring::lower() {
+    char temp[length+1];
+    for(int i=0;i<length;i++) {
+        temp[i] = tolower(cstring[i]);
+    }
+
+    //Null terminator
+    temp[length] = '\0';
+
+    DSstring dstemp(temp);
+    return dstemp;
+}
+
+
+//Get the underlying cstring
+char* DSstring::c_str() {
+    return cstring;
+}
+
+
 //Remove whitespace and punctuation from the start and end of a word
-DSstring& DSstring::trimPunct() {
+DSstring DSstring::trimPunct() {
     if(length == 0)
         return *this;
 
@@ -274,16 +214,16 @@ DSstring& DSstring::trimPunct() {
     if(i+j >= length) {
         char newChar[1];
         newChar[0] = '\0';
-        DSstring* temp = new DSstring(newChar);
-        return *temp;
+        DSstring temp(newChar);
+        return temp;
     } else {
         char newChar[length-i-j+1];
         for(int k=i;k<length-j;k++) {
             newChar[k-i] = charAt(k);
         }
         newChar[length-i-j] = '\0';
-        DSstring* temp = new DSstring(newChar);
-        return *temp;
+        DSstring temp(newChar);
+        return temp;
     }
 
 }
@@ -291,7 +231,6 @@ DSstring& DSstring::trimPunct() {
 //Split a string of words on any number of spaces, storing the number
 //of words into numWords
 DSstring* DSstring::splitIntoWords(int& numWords) {
-    DSstring* lineArray;
     int start = 0;
 
     //use to skip a block of multiple spaces
@@ -313,7 +252,7 @@ DSstring* DSstring::splitIntoWords(int& numWords) {
 
 
     //Store the words into lineArray
-    lineArray = new DSstring[numWords+1];
+    DSstring* lineArray = new DSstring[numWords+1];
 
     numWords = 0;
     spaceBlock = false;
@@ -333,5 +272,40 @@ DSstring* DSstring::splitIntoWords(int& numWords) {
 }
 
 int DSstring::toInt() {
-    return atoi(cstring);
+    return std::atoi(cstring);
+}
+
+//Get the length of the string
+int DSstring::size() const {
+    return length;
+}
+
+// Returns the character at the given position.
+char DSstring::charAt(int index) const {
+    if(length == 0 || index>=length) {
+        static char s;
+        s = 0;
+        return s;
+    }
+    if(index < 0) {
+        index = length+index;
+    }
+
+    return cstring[index];
+}
+
+/* ----- Friend Functions ----- */
+
+//Swap method
+void swap(DSstring& first, DSstring& second) {
+    using std::swap;
+
+    swap(first.length, second.length);
+    swap(first.cstring, second.cstring);
+}
+
+//<< Operator
+ostream& operator<< (ostream& os, const DSstring& dss) {
+    os << dss.cstring;
+    return os;
 }

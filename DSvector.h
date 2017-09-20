@@ -18,6 +18,7 @@ class DSvector {
         int max_size;
         int length;
     public:
+        /* ----- Constructors ----- */
         //Default constructor - reserve 10 spaces
         DSvector<T>() {
             length=0;
@@ -39,6 +40,50 @@ class DSvector {
         ~DSvector() {
             delete [] arr;
         }
+        /* ----- Operators ----- */
+        //Swap function
+        void friend swap(DSvector& first, DSvector& second) {
+            using std::swap;
+
+            swap(first.length, second.length);
+            swap(first.max_size, second.max_size);
+            swap(first.arr, second.arr);
+        }
+        //Assignment operator
+        DSvector<T>& operator= (DSvector<T> v) {
+            swap(*this, v);
+
+            return *this;
+        }
+        bool operator==(const DSvector<T> &v) {
+            if(size() != v.size()) {
+                return false;
+            }
+            for(int i=0;i<size();i++) {
+                if(get(i) != v.get(i)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        bool operator!=(const DSvector<T> &v) {
+            return !(*this==v);
+        }
+        // << operator
+        friend ostream& operator<<(ostream& os, const DSvector& dsv) {
+            os << "<";
+
+            for(int i=0;i<dsv.length;i++) {
+                os << dsv.arr[i] << " ";
+            }
+
+            os << ">" << endl;
+            
+
+            return os;
+        }
+
+        /* ----- Other Functionality ----- */
         //Add item to the end of the vector
         void add(const T &item) {
             if(length+1==max_size) {
@@ -62,33 +107,6 @@ class DSvector {
         }
         int size() const {return length;}
         bool isEmpty() { return length==0;}
-        //Assignment operator
-        DSvector<T>& operator= (const DSvector<T> &v) {
-            length = v.length;
-            max_size = v.max_size;
-
-            arr = new T[max_size];
-
-            for(int i=0;i<length;i++) {
-                arr[i] = v.arr[i];
-            }
-            return *this;
-        }
-        bool operator==(const DSvector<T> &v) {
-            //cout << size() << " " << v.size() << endl;
-            if(size() != v.size()) {
-                return false;
-            }
-            for(int i=0;i<size();i++) {
-                if(get(i) != v.get(i)) {
-                    return false;
-                }
-            }
-            return true;
-        }
-        bool operator!=(const DSvector<T> &v) {
-            return !(*this==v);
-        }
         bool contains(T value) {
             for(int i=0;i<length;i++) {
                 if(get(i) == value) {
@@ -97,18 +115,5 @@ class DSvector {
             }
             return false;
         }
-        // << operator
-        friend ostream& operator<<(ostream& os, const DSvector& dsv) {
-            os << "<";
-
-            for(int i=0;i<dsv.length;i++) {
-                os << dsv.arr[i] << " ";
-            }
-
-            os << ">" << endl;
-            
-
-            return os;
-        };
 };
 #endif
