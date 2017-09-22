@@ -7,7 +7,6 @@
 #include <cstring>
 #include "DSstring.h"
 #include "DSvector.h"
-//#include "DSlinkedList.h"
 
 TEST_CASE("DSstring class", "[string]"){
 
@@ -122,6 +121,15 @@ TEST_CASE("DSvector class", "[vector]") {
         REQUIRE(ll2.contains(0));
         REQUIRE(!ll2.contains(2));
         REQUIRE(!ll3.contains(2));
+    }
+
+    SECTION("Delete method"){
+        ll1.remove(0);
+        REQUIRE(!ll1.contains(1));
+        REQUIRE(ll1.contains(2));
+        ll2.remove(0);
+        REQUIRE(!ll2.contains(0));
+        REQUIRE(!ll2.contains(2));
     }
     
 

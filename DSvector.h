@@ -38,7 +38,6 @@ class DSvector {
         };
         //Deconstructor
         ~DSvector() {
-            cout << "destructing dsvector " << this << endl;
             delete [] arr;
         }
         /* ----- Operators ----- */
@@ -85,9 +84,8 @@ class DSvector {
         }
 
         /* ----- Other Functionality ----- */
-        //Add item to the end of the vector
-        void add(const T &item) {
-            if(length+1==max_size) {
+        //Expand the size of the vector
+        void resize() {
                 max_size*=2;
                 T* temp = new T[max_size];
                 for(int i=0;i<length;i++) {
@@ -95,16 +93,48 @@ class DSvector {
                 }
                 delete [] arr;
                 arr = temp;
+        }
+        //Add item to the end of the vector
+        void add(const T &item) {
+            if(length+1==max_size) {
+                resize();
             }
 
             arr[length] = item;
-            //cout << "Successfully added " << arr[length] << endl;
-            
             length++;
+        }
+        //Add item to the vector at index
+        void add(const T &item, int index) {
+            if(index>length+1)
+                return;
+            if(length+1==max_size) {
+                resize();
+            }
+
+            for(int i=length;i>index;i--) {
+                arr[i] = arr[i-1];
+            }
+            arr[index] = item;
+            length++;
+        }
+        //Overwrite the element in the vector at the given index
+        void remove(int index) {
+            if(index>=length || index<0)
+                return;
+            if(length == 1) {
+                length = 0;
+            } else {
+                for(int i=index;i<length-1;i++)
+                    arr[i] = arr[i+1];
+            }
         }
         //Get item at the ith index of the vector
         T get(int i) const{
             return arr[i];
+        }
+        //Get item at the ith index of the vector
+        T& operator[] (int index) const {
+            return arr[index];
         }
         int size() const {return length;}
         bool isEmpty() { return length==0;}

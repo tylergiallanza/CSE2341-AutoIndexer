@@ -8,11 +8,21 @@
 
 using namespace std;
 
+/*AutoIndexer Class - Tyler Giallanza
+ * A class that generates a book index given key words/phrases on various
+ * page numbers.
+ *
+ * Uses a Red Black Tree based dictionary to store word/page assocations.
+ *
+*/
+
+//Primary constructor - take the path to an input file and read it
 AutoIndexer::AutoIndexer(const char* inPath) {
     inFilePath = inPath;
     tree = new DSRBtree<DSstring, int>("\0");
     readInFile();
 }
+
 //Write index results to the output file
 void AutoIndexer::writeToFile(const char* outPath) {
     ofstream outFile(outPath);
@@ -59,6 +69,7 @@ void AutoIndexer::writeToFile(const char* outPath) {
     outFile.close();
     outFile.clear();
 }
+
 //Destructor
 AutoIndexer::~AutoIndexer() {
     delete tree;
@@ -105,6 +116,7 @@ void AutoIndexer::readInFile() {
     }
 }
 
+//Split a line into a DSstring array, where each member is a key word/phrase
 DSstring* AutoIndexer::splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
     int numWordsTemp = 0;
 
@@ -158,21 +170,24 @@ DSstring* AutoIndexer::splitIntoWordsAndPhrases(DSstring* str, int& numWords) {
     return lineArray;
 }
 
+//Method for finding the string size of an integer
 int AutoIndexer::sizeInt(int i) {
+    //0 case
     if(i==0) 
         return 1;
 
     int length = 0;
 
+    //Negative number case
     if(i<0) {
         length=1;
         i*=-1;
     }
 
+    //Natural numbers
     while(i>0) {
         i/=10;
         length++;
     }
     return length;
-
 }

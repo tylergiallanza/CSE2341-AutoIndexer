@@ -1,0 +1,14 @@
+[a]
+algorithm: 1, 2, 5
+algorithmicallitalism: 13333, 14444, 14499, 
+    14554, 23333
+analysis: 1, 2
+[b]
+binary search tree: 2
+binary tree: 1
+[c]
+complete binary tree: 3
+[h]
+heap: 1, 2
+[t]
+tree: 1, 3, 5, 14444, 14499, 14554

@@ -1,0 +1,14 @@
+[a]
+algorithm: 1, 2, 3, 6, 8, 9, 10
+another search phrase: 1, 2, 3, 6, 8, 9
+[b]
+binary search tree: 1, 2, 3, 5, 6, 7, 8, 9, 10
+[h]
+heap: 1, 2, 3, 5, 6, 7, 8, 9, 10
+heap tree: 1, 2, 3, 5, 6, 9, 10
+[p]
+phrased phrase: 1, 2, 3, 5, 6, 8, 9, 10
+[t]
+thisisareallylongword: 1, 2, 5, 6, 8, 9, 10
+thisisareallyrealllongword: 1, 2, 5, 6, 7, 8, 9
+tree: 1, 2, 6, 8, 9, 10
