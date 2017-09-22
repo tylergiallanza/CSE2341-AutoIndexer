@@ -17,42 +17,44 @@ AutoIndexer::AutoIndexer(const char* inPath) {
 void AutoIndexer::writeToFile(const char* outPath) {
     ofstream outFile(outPath);
     char currentChar = '\0';
-    DSvector<DSRBnode<DSstring, int> > nodes = tree->inOrderTraverse();
-    for(int i=0;i<nodes.size();i++)  {
-        if(nodes.get(i).key[0] != currentChar) {
-            currentChar = nodes.get(i).key[0];
+    DSvector<DSRBnode<DSstring, int>* >* nodes = tree->inOrderTraverse();
+    for(int i=0;i<nodes->size();i++)  {
+        if(nodes->get(i)->key[0] != currentChar) {
+            currentChar = nodes->get(i)->key[0];
             outFile << "[" << currentChar << "]" << endl;
         }
 
         bool indent = false;
         DSstring commaSpace(", ");
         DSstring* lineBuffer = new DSstring(": ");
-        *lineBuffer = nodes.get(i).key + *lineBuffer;
-        for(int j=0;j<nodes.get(i).values->size();j++) {
+        *lineBuffer = nodes->get(i)->key + *lineBuffer;
+        for(int j=0;j<nodes->get(i)->values->size();j++) {
             if(indent) {
                 delete lineBuffer;
                 lineBuffer = new DSstring("    ");
-                if(j==nodes.get(i).values->size()-1)
-                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j);
+                if(j==nodes->get(i)->values->size()-1)
+                    *lineBuffer = *lineBuffer + nodes->get(i)->values->get(j);
                 else
-                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
+                    *lineBuffer = *lineBuffer + nodes->get(i)->values->get(j) + commaSpace;
                 indent = false;
             } else {
-                if(lineBuffer->size()+sizeInt(nodes.get(i).values->get(j))+2 > 50) {
+                if(lineBuffer->size()+sizeInt(nodes->get(i)->values->get(j))+2 > 50) {
                     indent = true;
                     outFile << *lineBuffer << endl;
                     j--;
                     continue;
                 }
-                if(j==nodes.get(i).values->size()-1)
-                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j);
+                if(j==nodes->get(i)->values->size()-1)
+                    *lineBuffer = *lineBuffer + nodes->get(i)->values->get(j);
                 else
-                    *lineBuffer = *lineBuffer + nodes.get(i).values->get(j) + commaSpace;
+                    *lineBuffer = *lineBuffer + nodes->get(i)->values->get(j) + commaSpace;
             }
         }
         outFile << *lineBuffer << endl;
         delete lineBuffer;
     }
+
+    delete nodes;
 
     outFile.close();
     outFile.clear();

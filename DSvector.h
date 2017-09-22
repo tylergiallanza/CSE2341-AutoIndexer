@@ -38,6 +38,7 @@ class DSvector {
         };
         //Deconstructor
         ~DSvector() {
+            cout << "destructing dsvector " << this << endl;
             delete [] arr;
         }
         /* ----- Operators ----- */

@@ -33,13 +33,13 @@ class DSRBnode {
             swap(first.right, second.right);
             swap(first.parent, second.parent);
         }
-        DSRBnode() { }
+        DSRBnode() {  }
         DSRBnode(DSRBnode<T, K>& other) {
             key = other.key;
             left = other.left;
             right = other.right;
             parent = other.parent;
-            values = other.values;
+            values = new DSsortedLinkedList<K>(*other.values);
         }
         DSRBnode<T, K> operator+(DSRBnode<T, K> other) {
             swap(*this,other);
@@ -69,24 +69,25 @@ class DSRBtree {
         ~DSRBtree() {
             deconstructorHelper(rootNode);
         }
-        void inOrderHelper(DSRBnode<T, K>* current, DSvector<DSRBnode<T, K> >* v) {
-                if(!(current->left->key==sentinel)) {
-                    inOrderHelper(current->left, v);
+        void deconstructorHelper(DSRBnode<T, K>* current) {
+                if(current->left && !(current->left->key==sentinel)) {
+                    deconstructorHelper(current->left);
                 }
 
-                v->add(*current);
-
-                if(!(current->right->key==sentinel)) {
-                    inOrderHelper(current->right, v);
+                if(current->right && !(current->right->key==sentinel)) {
+                    deconstructorHelper(current->right);
                 }
-        }
-        DSvector<DSRBnode<T, K> > inOrderTraverse() {
-            DSvector<DSRBnode<T, K> >* result = new DSvector<DSRBnode<T, K> >;
 
-            inOrderHelper(rootNode,result);
+                if(current->left && current->left->key==sentinel) {
+                    delete current->left;
+                }
+                if(current->right && current->right->key==sentinel) {
+                    delete current->right;
+                }
 
-            return *result;
+                delete current;
         }
+
         //Assignment operator
         DSRBtree<T,K>& operator= (const DSRBtree<T,K> &other) {
             rootNode = other.rootNode;
@@ -263,23 +264,23 @@ class DSRBtree {
             return printHelper(os,tree,current);
         }
 
-        void inOrderHelper(DSRBnode<T, K>* current, DSvector<DSRBnode<T, K> >* v) {
+        void inOrderHelper(DSRBnode<T, K>* current, DSvector<DSRBnode<T, K>* >* v) {
                 if(!(current->left->key==sentinel)) {
                     inOrderHelper(current->left, v);
                 }
 
-                v->add(*current);
+                v->add(current);
 
                 if(!(current->right->key==sentinel)) {
                     inOrderHelper(current->right, v);
                 }
         }
-        DSvector<DSRBnode<T, K> > inOrderTraverse() {
-            DSvector<DSRBnode<T, K> >* result = new DSvector<DSRBnode<T, K> >;
+        DSvector<DSRBnode<T, K>* >* inOrderTraverse() {
+            DSvector<DSRBnode<T, K>* >* result = new DSvector<DSRBnode<T, K>* >;
 
             inOrderHelper(rootNode,result);
 
-            return *result;
+            return result;
         }
 };
 #endif

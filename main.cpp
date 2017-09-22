@@ -2,6 +2,8 @@
 #include "AutoIndexer.h"
 #include "tests.hpp"
 
+#include "DSsortedLinkedList.h"
+
 using namespace std;
 
 
@@ -24,6 +26,14 @@ int main(int argc, const char * argv[]) {
 
         AutoIndexer ai(argv[1]);
         ai.writeToFile(argv[2]);
+
+        /*DSsortedLinkedList<DSstring> * list = new DSsortedLinkedList<DSstring>;
+        DSstring str("hi");
+        DSstring str2("ihi");
+        list->add(str);
+        list->add(str2);
+        list->add(str);
+        delete list;*/
 
         //Output total runtime
         t = clock() - t;

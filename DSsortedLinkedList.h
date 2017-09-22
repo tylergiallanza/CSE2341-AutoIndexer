@@ -49,6 +49,7 @@ class DSsortedLinkedList {
 
         //Copy constructor
         DSsortedLinkedList<T>(const DSsortedLinkedList& list) {
+            //cout << "copying list" << endl;
             length = list.length;
             DSlinkedListNode<T>* current = list.rootNode;
             DSlinkedListNode<T>* newRoot = NULL;
@@ -71,16 +72,16 @@ class DSsortedLinkedList {
 
         //Deconstructor
         ~DSsortedLinkedList<T>() {
-            DSlinkedListNode<T>* current = rootNode;
-            DSlinkedListNode<T>* nextNode;
-            while(current != NULL) {
-                nextNode = current->next;
-                delete current;
-                current = nextNode;
+            DSlinkedListNode<T>* temp = NULL;
+            while(rootNode) {
+                temp = rootNode->next;
+                delete rootNode;
+                rootNode = temp;
             }
+            rootNode = NULL;
+            lastNode = NULL;
         }
         void add(T item) {
-            //cout << "Adding " << item << endl;
             length++;
             DSlinkedListNode<T>* temp = new DSlinkedListNode<T>;
             temp->value = item;
@@ -96,6 +97,8 @@ class DSsortedLinkedList {
                 if(item == current->value) {
                     //It's already in the list as the root
                     length--;
+                    //Delete the node we created to store the item
+                    delete temp;
                     return;
                 }
                 if(item < current->value) {
@@ -109,6 +112,7 @@ class DSsortedLinkedList {
                     if(item == current->value) {
                         //It's already in the list
                         length--;
+                        delete temp;
                         return;
                     }
                     if(item < current->next->value) {
@@ -168,27 +172,18 @@ class DSsortedLinkedList {
             return os;
         }
             
-        //Assignment operator
-        DSsortedLinkedList<T>& operator= (const DSsortedLinkedList<T> &list) {
-            length = list.length;
-            if(&list != this) {
-            DSlinkedListNode<T>* current = list.rootNode;
-            DSlinkedListNode<T>* newRoot = NULL;
-            while(current != NULL) {
-                DSlinkedListNode<T>* temp = new DSlinkedListNode<T>; 
-                temp->value = current->value;
-                temp->next = NULL;
-                if(newRoot != NULL) {
-                    newRoot->next = temp;
-                } else {
-                    newRoot = temp;
-                }
-           
-                current = current->next;
-            }
+        //Swap method
+        friend void swap(DSsortedLinkedList<T>& first, DSsortedLinkedList<T>& second) {
+            using std::swap;
 
-            rootNode = list.rootNode;
-            }
+            swap(first.rootNode, second.rootNode);
+            swap(first.lastNode, second.lastNode);
+            swap(first.length, second.length);
+        }
+        //Assignment operator
+        DSsortedLinkedList<T>& operator= (DSsortedLinkedList<T> other) {
+            //cout << "Assigning list" << endl;
+            swap(*this, other);
             return *this;
         }
 };
